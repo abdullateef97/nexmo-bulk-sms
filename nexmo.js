@@ -16,41 +16,70 @@ nex.prototype.setCredentials = (apiKey, apiSecret) => {
     })
 }
 
-// nex.prototype.sendSms = (from,toPath,message,split= ",") => {
-//     let promise = new Promise((resolve,reject) => {
-//     if(!this.apiKey && !this.apiSecret){
-//         console.log("apiKey and/or apiSecret not set, use .setCredentials(apiKey,apiSecret)");
-//         return
-//     }
-//     // toPath = file absolute path
-//     fs.readFile(toPath, 'utf8', (err,data) => {
-//         if(err){
-//             console.log(err.message)
-//             return;
-//         }
-//         let toArr = data.split(split);
-//         let sentSmsCount = 0;
-//         toArr.forEach((to) => {
-//             this.nexmo.message.sendSms(from, to, message, (err,responseData) => {
-//         if(err){
-//             console.log('err',err.message);
-//             reject(err)
-//             return;
-//         }
-//         else{
-//             sentSmsCount += 1      
-//         }
-//     })
-//         })
-//     let promiseRet = {
-//         "sentSmsCount":sentSmsCount,
-//     }
-//     resolve(promiseRet)
-//     })
 
-// })
-// return promise
-// }
+nex.prototype.sendSms = (from,toPath,message,split= "",cb) => {
+    if(!this.apiKey && !this.apiSecret){
+        console.log("apiKey and/or apiSecret not set, use .setCredentials(apiKey,apiSecret)");
+        return
+    }
+    // toPath = file absolute path
+    fs.readFile(toPath, 'utf8', (err,data) => {
+        if(err){
+            console.log(err.message)
+            return;
+        }
+        let toArr = data.split(split);
+        let sentSmsCount = 0;
+        toArr.forEach((to) => {
+            this.nexmo.message.sendSms(from, to, message, (err,responseData) => {
+        if(err){
+            console.log('err',err.message);
+            cb(err)
+            return;
+        }
+        else{
+            sentSmsCount += 1      
+        }
+    })
+        })
+    cb({'success' : true,'sentSmsCount':sentSmsCount})
+
+
+})
+}
+
+nex.prototype.sendSms = (from,toPath,message,split= ",") => {
+    let promise = new Promise((resolve,reject) => {
+    if(!this.apiKey && !this.apiSecret){
+        console.log("apiKey and/or apiSecret not set, use .setCredentials(apiKey,apiSecret)");
+        return
+    }
+    // toPath = file absolute path
+    fs.readFile(toPath, 'utf8', (err,data) => {
+        if(err){
+            console.log(err.message)
+            return;
+        }
+        let toArr = data.split(split);
+        let sentSmsCount = 0;
+        toArr.forEach((to) => {
+            this.nexmo.message.sendSms(from, to, message, (err,responseData) => {
+        if(err){
+            console.log('err',err.message);
+            reject(err)
+            return;
+        }
+        else{
+            sentSmsCount += 1      
+        }
+    })
+        })
+    resolve({'success' : true,'sentSmsCount':sentSmsCount});
+    })
+
+})
+return promise
+}
 
 nex.prototype.sendSms = (from,toPath,message,split= ",") => {
     if(!this.apiKey && !this.apiSecret){
